@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import json
 import os
 
 import template
 from slpp import slpp as lua
-from pprint import pprint
-import json
 
 MODELS = {
     'Warrior': {1: 'DPSWarr', 2: 'DPSWarr', 3: 'ProtWarr'},
@@ -64,7 +63,7 @@ DEFAULT_ENCHANTS = {
             -113822, -121075, -123232, -153869, -152673, -181952, -181071, -183849],
     },
     'DeathKnight': {
-        1: [-13818, -33852,-153294, -151851, -53297, -93850, -103253, -73822, -83232, -163847],
+        1: [-13818, -33852, -153294, -151851, -53297, -93850, -103253, -73822, -83232, -163847],
         2: [-13817, -33808, -153831, -151099, -53832, -93845, -101603, -73823, -83232, -81597, -163370,
             -153368],
         3: [-13817, -33808, -153831, -151099, -53832, -93845, -101603, -73823, -83232, -81597, -163370,
@@ -75,7 +74,7 @@ DEFAULT_ENCHANTS = {
         2: [-13817, -33808, -41099, -53832, -83845, -93222, -93234, -93231, -113823, -123826, -12983,
             -153789,
             -13818, -33852, -41099, -53832, -83850, -93222, -113822, -123232, -152673],
-        3: [-13820, -33810, -43831. -53832. -82332, -93246, -113719, -123232, -121147, -153834, -153854],
+        3: [-13820, -33810, -43831, -53832, -82332, -93246, -113719, -123232, -121147, -153834, -153854],
     },
     'Mage': {
         1: [-13820, -33810, -43831, -53832, -82332, -93246, -113719, -123826, -123232, -153854, -153834,
@@ -169,8 +168,6 @@ info = {}  # class and equipment
 for userrealm in EG_data['faction']['Horde']['users']:
     username = userrealm.split('-')[0]
     data = EG_data['faction']['Horde']['users'][userrealm]
-    print(data)
-    print()
     data = data.replace(';', ', ').replace('["', '"').replace('"]', '"')
     data = data.replace('[', '"').replace(']', '"').replace('=', ':')
     # I don't feel like making a parser for this fucked up bullshit EG is pretending is a format.
@@ -181,8 +178,6 @@ for userrealm in EG_data['faction']['Horde']['users']:
         data = data.replace(rep, f'"{rep}"')
     data = data.replace(', }', '}')
     data = data.replace(', ', ',\n')
-    print(data)
-    print()
     data = json.loads(data)
     if not data or 'talentTree1' not in data or data['level'] != 80 or 'equipment' not in data:
         continue
@@ -210,7 +205,7 @@ if user in specs:
     for index in info[user]['equipment']:
         try:
             _, id, enchant, gem1, gem2, gem3, _, _, _, _ = info[user]['equipment'][index].split(':')
-        except:
+        except:  # noqa
             pass
         itemString = '.'.join([id, gem1, gem2, gem3, enchant])
         equipment += f"  <{EQUIP_MAP[index]}>{itemString}</{EQUIP_MAP[index]}>\n"
