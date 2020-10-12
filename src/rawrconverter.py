@@ -6,8 +6,6 @@ import os
 import template
 from slpp import slpp as lua
 
-WOW_INSTALL = "/mnt/hdd/Games/WoW 3.3.5"
-
 MODELS = {
     'Warrior': {1: 'DPSWarr', 2: 'DPSWarr', 3: 'ProtWarr'},
     'DeathKnight': {1: 'TankDK', 2: 'DPSDK', 3: 'DPSDK'},
@@ -112,7 +110,22 @@ EQUIP_MAP = {
     18: 'Ranged',
 }
 
-EG_file = "WTF/Account/EXECUTIVE10/SavedVariables/ElitistGroup.lua"
+ENCHANT_MAP = {
+    -1: 'Head',
+    -3: 'Shoulder',
+    -4: 'Back',
+    -5: 'Chest',
+    -8: 'Wrist',
+    -9: 'Hands',
+    -11: 'Legs',
+    -12: 'Feet',
+    -15: 'MainHand',
+    -16: 'OffHand',
+    -19: 'Ranged',
+}
+
+EG_file_1 = "WTF/Account"
+EG_file_2 = "SavedVariables/ElitistGroup.lua"
 
 if os.path.isfile('.wowpath'):
     with open('.wowpath') as f:
@@ -121,12 +134,16 @@ else:
     while True:
         print("Please give the path to your WoW install:")
         wow_path = input()
-        if os.path.isfile(os.path.join(wow_path, EG_file)):
+        print("Please give the account username that has the EG files:")
+        username = input().upper()
+        wow_path = os.path.join(wow_path, EG_file_1, username, EG_file_2)
+        print(wow_path)
+        if os.path.isfile(wow_path):
             with open('.wowpath', 'w') as f:
                 f.write(wow_path)
             break
 
-with open(os.path.join(wow_path, EG_file)) as f:
+with open(wow_path) as f:
     EG_data = f.read()
 
 # first 17 bytes are a label
