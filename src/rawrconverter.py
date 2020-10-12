@@ -207,7 +207,8 @@ if user in specs:
             _, id, enchant, gem1, gem2, gem3, _, _, _, _ = info[user]['equipment'][index].split(':')
         except:  # noqa
             pass
-        itemString = '.'.join([id, gem1, gem2, gem3, enchant])
+        #itemString = '.'.join([id, gem1, gem2, gem3, enchant])
+        itemString = '.'.join([id, '0', '0', '0', enchant])
         equipment += f"  <{EQUIP_MAP[index]}>{itemString}</{EQUIP_MAP[index]}>\n"
         available += f"  <AvailableItems>{id}</AvailableItems>\n"
     for enchant in DEFAULT_ENCHANTS[class_name][spec]:
