@@ -5,7 +5,6 @@
   <Region>US</Region>
   <Race>{race}</Race>
   <Class>{class_name}</Class>
-{available}
   <ActiveBuffs>Blessing of Sanctuary</ActiveBuffs>
   <ActiveBuffs>Blessing of Sanctuary (Str/Sta Bonus)</ActiveBuffs>
   <ActiveBuffs>Blessing of Kings</ActiveBuffs>
@@ -39,7 +38,8 @@
   <ActiveBuffs>Fish Feast</ActiveBuffs>
   <ActiveBuffs>Trueshot Aura</ActiveBuffs>
   <ActiveBuffs>Hunter's Mark</ActiveBuffs>
-  <ActiveBuffs>Improved and Glyphed Hunter's Mark</ActiveBuffs>
+  <ActiveBuffs>Expertise molten</ActiveBuffs>
+{available}
   <CurrentModel>{model}</CurrentModel>
   <EnforceMetagemRequirements>true</EnforceMetagemRequirements>
   <CalculationOptions>

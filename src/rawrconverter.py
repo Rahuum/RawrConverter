@@ -5,6 +5,8 @@ import os
 
 import template
 from slpp import slpp as lua
+from pprint import pprint
+import json
 
 MODELS = {
     'Warrior': {1: 'DPSWarr', 2: 'DPSWarr', 3: 'ProtWarr'},
@@ -118,24 +120,24 @@ DEFAULT_ENCHANTS = {
 }
 
 EQUIP_MAP = {
-    1: 'Head',
-    2: 'Neck',
-    3: 'Shoulders',
-    4: 'Shirt',
-    5: 'Chest',
-    6: 'Waist',
-    7: 'Legs',
-    8: 'Feet',
-    9: 'Wrist',
-    10: 'Hands',
-    11: 'Finger1',
-    12: 'Finger2',
-    13: 'Trinket1',
-    14: 'Trinket2',
-    15: 'Back',
-    16: 'MainHand',
-    17: 'OffHand',
-    18: 'Ranged',
+    '1': 'Head',
+    '2': 'Neck',
+    '3': 'Shoulders',
+    '4': 'Shirt',
+    '5': 'Chest',
+    '6': 'Waist',
+    '7': 'Legs',
+    '8': 'Feet',
+    '9': 'Wrist',
+    '10': 'Hands',
+    '11': 'Finger1',
+    '12': 'Finger2',
+    '13': 'Trinket1',
+    '14': 'Trinket2',
+    '15': 'Back',
+    '16': 'MainHand',
+    '17': 'OffHand',
+    '18': 'Ranged',
 }
 
 EG_file_1 = "WTF/Account"
@@ -160,14 +162,28 @@ else:
 with open(wow_path) as f:
     EG_data = f.read()
 
-# first 17 bytes are a label
-EG_data = lua.decode(EG_data[17:].replace(';', ''))
+# first 18 bytes are a label
+EG_data = lua.decode(EG_data[18:])
 specs = {}  # the character's number of points in each tree
 info = {}  # class and equipment
 for userrealm in EG_data['faction']['Horde']['users']:
     username = userrealm.split('-')[0]
     data = EG_data['faction']['Horde']['users'][userrealm]
-    data = lua.decode(data)
+    print(data)
+    print()
+    data = data.replace(';', ', ').replace('["', '"').replace('"]', '"')
+    data = data.replace('[', '"').replace(']', '"').replace('=', ':')
+    # I don't feel like making a parser for this fucked up bullshit EG is pretending is a format.
+    # So I'm hacking it into json.
+    for rep in ['notes', 'secondarySpec', 'achievements', 'classToken', 'talentTree3', 'scanned', 'equipment',
+                'talentTree1', 'name', 'from', 'level', 'talentTree2', 'server', 'rating', 'time', 'role',
+                'pruned', 'true', 'specRole', 'comment', 'mainAchievements', 'unspentPoints']:
+        data = data.replace(rep, f'"{rep}"')
+    data = data.replace(', }', '}')
+    data = data.replace(', ', ',\n')
+    print(data)
+    print()
+    data = json.loads(data)
     if not data or 'talentTree1' not in data or data['level'] != 80 or 'equipment' not in data:
         continue
     main_spec = f"{data['talentTree1']}/{data['talentTree2']}/{data['talentTree3']}"
@@ -192,12 +208,15 @@ if user in specs:
     equipment = ""
     available = ""
     for index in info[user]['equipment']:
-        _, id, enchant, gem1, gem2, gem3, _, _, _, _ = info[user]['equipment'][index].split(':')
+        try:
+            _, id, enchant, gem1, gem2, gem3, _, _, _, _ = info[user]['equipment'][index].split(':')
+        except:
+            pass
         itemString = '.'.join([id, gem1, gem2, gem3, enchant])
         equipment += f"  <{EQUIP_MAP[index]}>{itemString}</{EQUIP_MAP[index]}>\n"
-        available += f"  <AvailableItems>{id}<AvailableItems>\n"
+        available += f"  <AvailableItems>{id}</AvailableItems>\n"
     for enchant in DEFAULT_ENCHANTS[class_name][spec]:
-        available += f"  <AvailableItems>{enchant}<AvailableItems>\n"
+        available += f"  <AvailableItems>{enchant}</AvailableItems>\n"
     available = available[:-1]  # remove trailing newline
     equipment = equipment[:-1]  # remove trailing newline
     xml = template.template.format(model=model, race=race, class_name=class_name,
